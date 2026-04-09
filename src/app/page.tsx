@@ -5,7 +5,7 @@ const Home = async () => {
   const session = await getSession();
   return (
     <>
-      <HomePage email={session?.user?.email!} />
+      <HomePage email={session?.user?.email} />
     </>
   )
 }
