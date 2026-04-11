@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { IoChatbubbleSharp } from "react-icons/io5";
 
 const HomePage = ({ email }: { email?: string }) => {
   const handleLogin = () => {
@@ -86,7 +87,7 @@ const HomePage = ({ email }: { email?: string }) => {
             </h1>
             <p className="mt-6 text-lg text-zinc-600 max-w-xl">
               Create your own AI chatbot in minutes. No coding required. Just
-              connect your knowledge base and let our AI do the rest. 
+              connect your knowledge base and let our AI do the rest.
             </p>
             <div className="mt-10 flex gap-4">
               {email ? (
@@ -94,8 +95,9 @@ const HomePage = ({ email }: { email?: string }) => {
                   Go to Dashboard
                 </button>
               ) : (
-                <button className="px-5 py-2 bg-black text-white rounded-full font-medium hover:bg-zinc-800 transition"
-                onClick={handleLogin}
+                <button
+                  className="px-5 py-2 bg-black text-white rounded-full font-medium hover:bg-zinc-800 transition"
+                  onClick={handleLogin}
                 >
                   Get Started
                 </button>
@@ -111,7 +113,43 @@ const HomePage = ({ email }: { email?: string }) => {
             transition={{ duration: 0.7, ease: "easeInOut", delay: 0.2 }}
             className="relative"
           >
-                                    
+            <div className="rounded-2xl bg-white shadow-2xl border border-zinc-200 overflow-hidden p-6">
+              <div className="text-sm text-zinc-500 mb-3">
+                Live Chat Preview
+              </div>
+              <div className="space-y-3">
+                <div className="flex">
+                  <div className="bg-zinc-100 rounded-lg rounded-tl-none px-4 py-2 text-sm max-w-[80%]">
+                    Hi there! How can I assist you today?
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <div className="bg-black text-white rounded-lg rounded-tr-none px-4 py-2 text-sm max-w-[80%]">
+                    I have a question about my order.
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="bg-zinc-100 rounded-lg rounded-tl-none px-4 py-2 text-sm max-w-[80%]">
+                    Sure! Can you please provide your order number?
+                  </div>
+                </div>
+              </div>
+              <motion.div
+                animate={{
+                  y: [0, -8, 0],
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2.5,
+                  ease: "easeInOut",
+                }}
+                whileHover={{ scale: 1.1 }}
+                className="bg-black text-white flex items-center justify-center shadow-xl w-14 h-14 absolute -bottom-6 -right-6 rounded-full cursor-pointer"
+              >
+                <IoChatbubbleSharp size={30} />
+              </motion.div>
+            </div>
           </motion.div>
         </div>
       </section>
