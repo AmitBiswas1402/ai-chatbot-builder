@@ -24,6 +24,21 @@ const HomePage = ({ email }: { email?: string }) => {
     };
   }, []);
 
+  const features = () => [
+    {
+      title: "Easy Setup",
+      description: "Get your chatbot up and running in minutes with our intuitive setup process.",
+    },
+    {
+      title: "AI-Powered",
+      description: "Leverage the power of AI to provide intelligent and personalized responses to your customers.",
+    },
+    {
+      title: "Customizable",
+      description: "Tailor the chatbot's appearance and behavior to match your brand and meet your specific needs.",
+    }
+  ]
+
   return (
     <div className="min-h-screen bg-linear-to-br from-white to-zinc-50 text-zinc-900 overflow-x-hidden">
       <motion.div
@@ -151,6 +166,32 @@ const HomePage = ({ email }: { email?: string }) => {
               </motion.div>
             </div>
           </motion.div>
+        </div>
+      </section>
+      <section className="bg-zinc-50 py-28 px-6 border-t border-zinc-200">
+        <div className="max-w-6xl mx-auto">
+          <motion.h2
+            className="text-3xl font-semibold text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeInOut" }}
+            viewport={{ once: false }}
+          >
+            Join thousands of businesses using our AI chatbot to provide
+          </motion.h2>
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-10">
+            {features().map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: "easeInOut", delay: index * 0.2 }}
+              >
+                <h3 className="text-xl font-semibold">{feature.title}</h3>
+                <p className="mt-2 text-zinc-600">{feature.description}</p>
+              </motion.div>
+            ))}                        
+          </div>
         </div>
       </section>
     </div>
