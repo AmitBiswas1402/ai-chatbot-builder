@@ -1,12 +1,17 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { IoChatbubbleSharp } from "react-icons/io5";
 
 const HomePage = ({ email }: { email?: string }) => {
+  const router = useRouter();
   const handleLogin = () => {
     window.location.href = "/api/auth/login";
+  };
+  const handleLogout = () => {
+    window.location.href = "/api/auth/logout";
   };
   const firstLetter = email ? email[0]?.toUpperCase() : "";
   const [open, setOpen] = useState(false);
@@ -27,17 +32,20 @@ const HomePage = ({ email }: { email?: string }) => {
   const features = () => [
     {
       title: "Easy Setup",
-      description: "Get your chatbot up and running in minutes with our intuitive setup process.",
+      description:
+        "Get your chatbot up and running in minutes with our intuitive setup process.",
     },
     {
       title: "AI-Powered",
-      description: "Leverage the power of AI to provide intelligent and personalized responses to your customers.",
+      description:
+        "Leverage the power of AI to provide intelligent and personalized responses to your customers.",
     },
     {
       title: "Customizable",
-      description: "Tailor the chatbot's appearance and behavior to match your brand and meet your specific needs.",
-    }
-  ]
+      description:
+        "Tailor the chatbot's appearance and behavior to match your brand and meet your specific needs.",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-linear-to-br from-white to-zinc-50 text-zinc-900 overflow-x-hidden">
@@ -72,7 +80,10 @@ const HomePage = ({ email }: { email?: string }) => {
                     <button className="w-full text-left px-4 py-3 text-sm hover:bg-zinc-100">
                       Dashboard
                     </button>
-                    <button className="block px-4 py-3 text-sm text-red-600 hover:bg-zinc-100">
+                    <button
+                      onClick={handleLogout}
+                      className="block px-4 py-3 text-sm text-red-600 hover:bg-zinc-100"
+                    >
                       Logout
                     </button>
                   </motion.div>
@@ -89,6 +100,8 @@ const HomePage = ({ email }: { email?: string }) => {
           )}
         </div>
       </motion.div>
+
+      {/* Hero Section */}
       <section className="pt-36 pb-28 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
           <motion.div
@@ -106,7 +119,10 @@ const HomePage = ({ email }: { email?: string }) => {
             </p>
             <div className="mt-10 flex gap-4">
               {email ? (
-                <button className="px-5 py-2 bg-black text-white rounded-full font-medium hover:bg-zinc-800 transition">
+                <button 
+                 className="px-5 py-2 bg-black text-white rounded-full font-medium hover:bg-zinc-800 transition"
+                  onClick={() => router.push("/dashboard")}
+                >
                   Go to Dashboard
                 </button>
               ) : (
@@ -168,6 +184,8 @@ const HomePage = ({ email }: { email?: string }) => {
           </motion.div>
         </div>
       </section>
+
+      {/* Features Section */}
       <section className="bg-zinc-50 py-28 px-6 border-t border-zinc-200">
         <div className="max-w-6xl mx-auto">
           <motion.h2
@@ -185,15 +203,25 @@ const HomePage = ({ email }: { email?: string }) => {
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: "easeInOut", delay: index * 0.2 }}
+                transition={{
+                  duration: 0.7,
+                  ease: "easeInOut",
+                  delay: index * 0.2,
+                }}
+                className="bg-white rounded-2xl p-8 shadow-lg border border-zinc-200 hover:shadow-2xl transition"
               >
                 <h3 className="text-xl font-semibold">{feature.title}</h3>
                 <p className="mt-2 text-zinc-600">{feature.description}</p>
               </motion.div>
-            ))}                        
+            ))}
           </div>
         </div>
       </section>
+
+      <footer className="py-10 text-center text-sm text-zinc-500">
+        &copy; {new Date().getFullYear()} AI ChatBot Builder. All rights
+        reserved.
+      </footer>
     </div>
   );
 };
