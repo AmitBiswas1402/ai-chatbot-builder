@@ -1,23 +1,11 @@
-import { scalekit } from "@/lib/scalekit";
 import { NextResponse } from "next/server";
 
 function getPostLogoutRedirectUrl() {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-
-  if (!appUrl) {
-    throw new Error("NEXT_PUBLIC_APP_URL is not set");
-  }
-
-  return new URL("/", appUrl).toString();
+  return "http://localhost:3000/";
 }
 
 function handleLogout() {
-  const postLogoutRedirectUrl = getPostLogoutRedirectUrl();
-  const logoutUrl = scalekit.getLogoutUrl({
-    postLogoutRedirectUri: postLogoutRedirectUrl,
-  });
-
-  const response = NextResponse.redirect(logoutUrl);
+  const response = NextResponse.redirect(getPostLogoutRedirectUrl());
 
   response.cookies.set("access_token", "", {
     httpOnly: true,
