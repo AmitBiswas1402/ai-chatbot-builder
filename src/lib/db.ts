@@ -1,4 +1,4 @@
-import { Db, MongoClient } from "mongodb";
+import mongoose from "mongoose";
 
 const uri = process.env.MONGODB_URI;
 
@@ -6,28 +6,22 @@ if (!uri) {
   throw new Error("Please define the MONGODB_URI environment variable");
 }
 
-type GlobalMongo = typeof globalThis & {
-  _mongoClientPromise?: Promise<MongoClient>;
+type GlobalMongoose = typeof globalThis & {
+  _mongoosePromise?: Promise<typeof mongoose>;
 };
 
-const globalMongo = globalThis as GlobalMongo;
+const globalMongoose = globalThis as GlobalMongoose;
 
-const clientPromise =
-  globalMongo._mongoClientPromise ??
-  new MongoClient(uri).connect().then((client) => {
-    if (process.env.NODE_ENV !== "production") {
-      globalMongo._mongoClientPromise = Promise.resolve(client);
-    }
-    return client;
-  });
+export async function connectDB(): Promise<typeof mongoose> {
+  if (globalMongoose._mongoosePromise) {
+    return globalMongoose._mongoosePromise;
+  }
 
-if (process.env.NODE_ENV !== "production") {
-  globalMongo._mongoClientPromise = clientPromise;
+  globalMongoose._mongoosePromise = mongoose
+    .connect(uri, {
+      dbName: process.env.MONGODB_DB || "ai-chatbot-builder",
+    })
+    .then(() => mongoose);
+
+  return globalMongoose._mongoosePromise;
 }
-
-export async function connectDB(dbName = process.env.MONGODB_DB): Promise<Db> {
-  const client = await clientPromise;
-  return dbName ? client.db(dbName) : client.db();
-}
-
-export { clientPromise };

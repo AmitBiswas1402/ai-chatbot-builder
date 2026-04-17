@@ -7,8 +7,8 @@ export async function POST(req: NextRequest) {
     const { ownerId, businessName, supportEmail, knowledge } = await req.json();
 
     if (!ownerId) {
-      return new NextResponse(
-        JSON.stringify({ error: "Owner ID is required" }),
+      return NextResponse.json(
+        { error: "Owner ID is required" },
         { status: 400 },
       );
     }
@@ -20,10 +20,13 @@ export async function POST(req: NextRequest) {
       { ownerId, businessName, supportEmail, knowledge },
       { new: true, upsert: true },
     );
-    return NextResponse.json(settings);
+    
+    return NextResponse.json(settings, { status: 200 });
   } catch (error) {
+    console.error("Settings API Error:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { message: `settings error : ${error}` },
+      { error: "Failed to save settings", details: errorMessage },
       { status: 500 },
     );
   }
