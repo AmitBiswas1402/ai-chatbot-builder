@@ -2,10 +2,6 @@ import mongoose from "mongoose";
 
 const uri = process.env.MONGODB_URI;
 
-if (!uri) {
-  throw new Error("Please define the MONGODB_URI environment variable");
-}
-
 type GlobalMongoose = typeof globalThis & {
   _mongoosePromise?: Promise<typeof mongoose>;
 };
@@ -13,6 +9,10 @@ type GlobalMongoose = typeof globalThis & {
 const globalMongoose = globalThis as GlobalMongoose;
 
 export async function connectDB(): Promise<typeof mongoose> {
+  if (!uri) {
+    throw new Error("Please define the MONGODB_URI environment variable");
+  }
+
   if (globalMongoose._mongoosePromise) {
     return globalMongoose._mongoosePromise;
   }

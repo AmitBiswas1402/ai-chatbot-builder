@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 
 function getPostLogoutRedirectUrl() {
-  return "http://localhost:3000/";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+
+  if (!appUrl) {
+    return "http://localhost:3000/";
+  }
+
+  return new URL("/", appUrl).toString();
 }
 
 function handleLogout() {

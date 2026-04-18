@@ -1,6 +1,9 @@
 import { scalekit } from "@/lib/scalekit";
 import { NextRequest, NextResponse } from "next/server";
 
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
+const AUTH_SCOPES = ["openid", "profile", "email", "offline_access"];
+
 function getRedirectUrl() {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
@@ -36,6 +39,7 @@ export async function GET(request: NextRequest) {
       connectionId: claims.connection_id,
       organizationId: claims.organization_id,
       loginHint: claims.login_hint,
+      scopes: AUTH_SCOPES,
       ...(claims.relay_state && { state: claims.relay_state }),
     });
 
@@ -57,6 +61,7 @@ export async function GET(request: NextRequest) {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
+    maxAge: COOKIE_MAX_AGE,
   });
 
   if (authResponse.refreshToken) {
@@ -65,6 +70,7 @@ export async function GET(request: NextRequest) {
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
       path: "/",
+      maxAge: COOKIE_MAX_AGE,
     });
   }
 

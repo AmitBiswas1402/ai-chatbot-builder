@@ -3,7 +3,7 @@
 import axios from "axios";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Dashboard = ({ ownerId }: { ownerId: string }) => {
   const router = useRouter();
@@ -13,12 +13,13 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const fetchHandleSettings = async () => {
     setLoading(true);
     setError(null);
     setSuccess(false);
-    
+
     try {
       const result = await axios.post("/api/settings", {
         ownerId,
@@ -30,9 +31,13 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
       console.log("Settings saved:", result.data);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
     } catch (err) {
-      const errorMsg = axios.isAxiosError(err) 
-        ? err.response?.data?.details || err.message 
+      const errorMsg = axios.isAxiosError(err)
+        ? err.response?.data?.details ||
+          err.response?.data?.error ||
+          err.message
         : String(err);
       setError(errorMsg);
       console.error("Error saving settings:", err);
@@ -40,6 +45,26 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (ownerId) {
+      const handleGetDetails = async () => {
+        try {
+          const result = await axios.post("/api/settings", {
+            ownerId,
+          });
+          setBusinessName(result.data.businessName || "");
+          setSupportEmail(result.data.supportEmail || "");
+          setKnowledge(result.data.knowledge || "");
+
+          console.log("Settings saved:", result.data);
+        } catch (err) {
+          console.error("Error saving settings:", err);
+        }
+      };
+      handleGetDetails();
+    }
+  }, [ownerId]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-linear-to-br from-slate-100 via-white to-stone-100 text-zinc-900">
@@ -147,7 +172,9 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
 
           {success && (
             <div className="mb-6 rounded-xl border border-green-300 bg-green-50 p-4">
-              <p className="text-sm font-medium text-green-800">Settings saved successfully!</p>
+              <p className="text-sm font-medium text-green-800">
+                ✅ Settings saved successfully!
+              </p>
             </div>
           )}
 

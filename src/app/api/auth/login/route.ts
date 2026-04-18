@@ -1,6 +1,8 @@
 import { scalekit } from "@/lib/scalekit";
 import { NextResponse } from "next/server";
 
+const AUTH_SCOPES = ["openid", "profile", "email", "offline_access"];
+
 function getRedirectUrl() {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
@@ -13,7 +15,9 @@ function getRedirectUrl() {
 
 function handleLogin() {
   const redirectUrl = getRedirectUrl();
-  const url = scalekit.getAuthorizationUrl(redirectUrl);
+  const url = scalekit.getAuthorizationUrl(redirectUrl, {
+    scopes: AUTH_SCOPES,
+  });
 
   return NextResponse.redirect(url);
 }
