@@ -5,6 +5,19 @@ import { NextRequest, NextResponse } from "next/server";
 
 type ChatPayload = { message?: string; ownerId?: string };
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.text();
@@ -52,14 +65,14 @@ export async function POST(req: NextRequest) {
     if (!message || !ownerId) {
       return NextResponse.json(
         { error: "Message and ownerId are required" },
-        { status: 400 },
+        { status: 400, headers: corsHeaders },
       );
     }
 
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
         { error: "GEMINI_API_KEY is not configured" },
-        { status: 500 },
+        { status: 500, headers: corsHeaders },
       );
     }
 
@@ -70,7 +83,7 @@ export async function POST(req: NextRequest) {
     if (!setting) {
       return NextResponse.json(
         { message: "No settings found for this ownerId" },
-        { status: 404 },
+        { status: 404, headers: corsHeaders },
       );
     }
 
@@ -106,12 +119,12 @@ export async function POST(req: NextRequest) {
       contents: prompt,
     });
 
-    return NextResponse.json({ text: response.text ?? "" });
+    return NextResponse.json({ text: response.text ?? "" }, { headers: corsHeaders });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
       { error: `Error generating AI content: ${errorMessage}` },
-      { status: 500 },
+      { status: 500, headers: corsHeaders },
     );
   }
 }
