@@ -89,7 +89,9 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
             </div>
           </div>
 
-          <button className="rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition hover:-translate-y-0.5 hover:border-zinc-400 hover:bg-zinc-50">
+          <button className="rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition hover:-translate-y-0.5 hover:border-zinc-400 hover:bg-zinc-50"
+          onClick={() => router.push("/embed")}
+          >
             Embed Chatbot
           </button>
         </div>

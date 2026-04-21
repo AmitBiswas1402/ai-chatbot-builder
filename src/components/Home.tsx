@@ -6,11 +6,14 @@ import { useEffect, useRef, useState } from "react";
 import { IoChatbubbleSharp } from "react-icons/io5";
 
 const HomePage = ({ email }: { email?: string }) => {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const handleLogin = () => {
+    setLoading(true);
     window.location.href = "/api/auth/login";
   };
   const handleLogout = () => {
+    setLoading(true);
     window.location.href = "/api/auth/logout";
   };
   const firstLetter = email ? email[0]?.toUpperCase() : "";
@@ -144,7 +147,7 @@ const HomePage = ({ email }: { email?: string }) => {
             transition={{ duration: 0.7, ease: "easeInOut", delay: 0.2 }}
             className="relative"
           >
-            <div className="rounded-2xl bg-white shadow-2xl border border-zinc-200 overflow-hidden p-6">
+            <div className="min-h-52 rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl">
               <div className="text-sm text-zinc-500 mb-3">
                 Live Chat Preview
               </div>
