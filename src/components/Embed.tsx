@@ -144,63 +144,54 @@ const Embed = ({ ownerId }: { ownerId: string }) => {
                 </div>
               </div>
 
-              <div className="relative flex h-64 items-start justify-start bg-zinc-50 p-6 text-sm text-zinc-400 sm:h-72">
-                Your Website goes here!
-                <div className="absolute bottom-6 right-6 w-72 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-2xl shadow-zinc-300/60">
-                  <div className="flex items-center justify-between bg-zinc-900 px-4 py-3 text-white">
-                    <span className="text-sm font-semibold tracking-wide">Customer Support</span>
-                    <button
-                      type="button"
-                      aria-label="Close chat preview"
-                      className="grid h-6 w-6 place-items-center rounded-full text-zinc-300 transition hover:bg-zinc-800 hover:text-white"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        className="h-3.5 w-3.5"
-                      >
-                        <path d="M6 6l12 12M18 6L6 18" />
-                      </svg>
-                    </button>
+              <div className="relative flex h-64 items-start justify-start bg-zinc-50 p-4 text-sm text-zinc-400 sm:h-72">
+                Your website goes here
+
+                <div className="absolute bottom-14 right-4 w-56 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl shadow-zinc-300/60">
+                  <div className="flex items-center justify-between bg-zinc-900 px-3 py-2 text-white">
+                    <span className="text-xs font-medium">Customer Support</span>
+                    <span className="text-xs leading-none text-zinc-300">x</span>
                   </div>
 
-                  <div className="space-y-3 bg-zinc-50 p-3 text-xs text-zinc-700">
-                    <div className="mr-8 rounded-xl rounded-bl-sm border border-zinc-200 bg-white px-3 py-2 shadow-sm">
-                      Hello! How can I help you today?
+                  <div className="space-y-2 bg-zinc-50 p-2.5 text-[11px] text-zinc-700">
+                    <div className="mr-6 rounded-md rounded-bl-sm bg-zinc-100 px-2.5 py-1.5">
+                      hi! how can i help you?
                     </div>
-                    <div className="ml-8 rounded-xl rounded-br-sm bg-zinc-900 px-3 py-2 text-zinc-100">
-                      I need details about your pricing.
+                    <div className="ml-8 rounded-md rounded-br-sm bg-black px-2.5 py-1.5 text-white">
+                      what is the return policy?
                     </div>
                   </div>
 
                   <div className="border-t border-zinc-200 bg-white p-2">
-                    <div className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-400">
-                      <span>Type your message...</span>
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        className="h-4 w-4 text-zinc-500"
+                    <div className="flex items-center gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-[10px] text-zinc-400">
+                      <span className="flex-1">Type your message...</span>
+                      <button
+                        type="button"
+                        aria-label="Send preview message"
+                        className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-black text-white"
                       >
-                        <path d="M4 12h14" />
-                        <path d="m12 6 6 6-6 6" />
-                      </svg>
+                        <svg
+                          aria-hidden="true"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          className="h-3.5 w-3.5"
+                        >
+                          <path d="M4 12h14" />
+                          <path d="m12 6 6 6-6 6" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 </div>
 
                 <motion.div
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{ repeat: Infinity, duration: 2.6, ease: "easeInOut" }}
-                  whileHover={{ scale: 1.06 }}
-                  className="absolute bottom-6 right-6 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg"
+                  animate={{ y: [0, -5, 0] }}
+                  transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }}
+                  className="absolute bottom-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-black text-white shadow-lg"
                 >
-                  <IoChatbubbleSharp size={30} />
+                  <IoChatbubbleSharp size={20} />
                 </motion.div>
               </div>
             </div>
