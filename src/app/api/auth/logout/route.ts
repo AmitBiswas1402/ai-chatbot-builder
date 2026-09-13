@@ -1,17 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-function getPostLogoutRedirectUrl() {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-
-  if (!appUrl) {
-    return "http://localhost:3000/";
+function getPostLogoutRedirectUrl(request?: NextRequest) {
+  if (request) {
+    const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
+    const proto = request.headers.get("x-forwarded-proto") || (host?.includes("localhost") || host?.includes("127.0.0.1") ? "http" : "https");
+    if (host) {
+      return `${proto}://${host}/`;
+    }
   }
-
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   return new URL("/", appUrl).toString();
 }
 
-function handleLogout() {
-  const response = NextResponse.redirect(getPostLogoutRedirectUrl());
+function handleLogout(request?: NextRequest) {
+  const response = NextResponse.redirect(getPostLogoutRedirectUrl(request));
 
   response.cookies.set("access_token", "", {
     httpOnly: true,
@@ -32,10 +34,10 @@ function handleLogout() {
   return response;
 }
 
-export async function GET() {
-  return handleLogout();
+export async function GET(request: NextRequest) {
+  return handleLogout(request);
 }
 
-export async function POST() {
-  return handleLogout();
+export async function POST(request: NextRequest) {
+  return handleLogout(request);
 }

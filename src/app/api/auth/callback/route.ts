@@ -4,18 +4,20 @@ import { NextRequest, NextResponse } from "next/server";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
 const AUTH_SCOPES = ["openid", "profile", "email", "offline_access"];
 
-function getRedirectUrl() {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-
-  if (!appUrl) {
-    throw new Error("NEXT_PUBLIC_APP_URL is not set");
+function getRedirectUrl(request?: NextRequest) {
+  if (request) {
+    const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
+    const proto = request.headers.get("x-forwarded-proto") || (host?.includes("localhost") || host?.includes("127.0.0.1") ? "http" : "https");
+    if (host) {
+      return `${proto}://${host}/api/auth/callback`;
+    }
   }
-
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   return new URL("/api/auth/callback", appUrl).toString();
 }
 
 export async function GET(request: NextRequest) {
-  const redirectUrl = getRedirectUrl();
+  const redirectUrl = getRedirectUrl(request);
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const error = searchParams.get("error");

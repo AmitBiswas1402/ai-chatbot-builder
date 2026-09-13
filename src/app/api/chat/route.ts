@@ -1,5 +1,5 @@
 import { connectDB } from "@/lib/db";
-import Setting from "@/models/settings.model";
+import { getSettingForOwner } from "@/lib/db";
 import { GoogleGenAI } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -76,48 +76,59 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await connectDB();
+    const setting = await getSettingForOwner(ownerId);
 
-    const setting = await Setting.findOne({ ownerId });
+    const businessName = setting?.businessName?.trim() || "our business";
+    const supportEmail = setting?.supportEmail?.trim() || "our support team";
+    const knowledgeBase = setting?.knowledge?.trim() || "";
 
-    if (!setting) {
-      return NextResponse.json(
-        { message: "No settings found for this ownerId" },
-        { status: 404, headers: corsHeaders },
-      );
+    if (!setting || !knowledgeBase) {
+      return NextResponse.json({
+        text: `Hello! I am the AI customer support assistant for ${businessName}. Our business knowledge base has not been fully configured yet in the Dashboard. Once details are added, I'll be able to answer specific product, pricing, and policy questions!`
+      }, { headers: corsHeaders });
     }
 
-    const KNOWLEDGE = `
-    Business Name: ${setting.businessName || "not provided"}
-    Support Email: ${setting.supportEmail || "not provided"}
-    Knowledge: ${setting.knowledge || "not provided"}
-    `;
-
     const prompt = `
-    You are a professional customer support agent for. Use ONLY the information provided below to answer the customer's question. You may rephrase, summarize, or interpret the information if needed. Do NOT invent new policies, prices, or promises. If you don't know the answer, say you don't know. Do not make up an answer. Reply with "Please contact customer support for more information." if the question is not answerable based on the provided information.:
+You are a friendly, helpful, and professional AI customer support agent for "${businessName}".
 
-    ---------------------
-    BUSINESS INFORMATION:
-    ---------------------
+CRITICAL GUIDELINES:
+1. GREETINGS: If the customer greets you (e.g. "hi", "hello", "hey", "good morning"), reply warmly, welcome them to ${businessName}, and ask how you can help them today.
+2. ACCURACY: Use ONLY the provided business information below to answer questions about products, services, return policies, shipping, or pricing.
+3. UNKNOWN QUESTIONS: If the question cannot be answered using the provided information, politely reply: "I don't have that specific information right now. Please reach out to customer support at ${supportEmail} for further assistance." Do NOT invent policies or details that are not in the knowledge base.
+4. TONE: Be polite, clear, concise, and professional.
 
-    ${KNOWLEDGE}
+---------------------
+BUSINESS INFORMATION:
+Business Name: ${businessName}
+Support Email: ${supportEmail}
+Knowledge Base:
+${knowledgeBase}
+---------------------
 
-    ---------------------
-    CUSTOMER QUESTION:
-    ---------------------
-    ${message}
+CUSTOMER QUESTION:
+${message}
 
-    ----------------------
-    ANSWER:
-    ----------------------
-    `;
+HELPFUL ANSWER:
+`;
 
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
+    const modelsToTry = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-1.5-flash"];
+    let response: any = null;
+    for (const model of modelsToTry) {
+      try {
+        response = await ai.models.generateContent({
+          model,
+          contents: prompt,
+        });
+        if (response?.text) break;
+      } catch (err) {
+        console.warn(`Model ${model} failed:`, err);
+      }
+    }
+    if (!response?.text) {
+      throw new Error("Unable to generate answer with Gemini AI");
+    }
 
     return NextResponse.json({ text: response.text ?? "" }, { headers: corsHeaders });
   } catch (error) {

@@ -50,7 +50,7 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
     if (ownerId) {
       const handleGetDetails = async () => {
         try {
-          const result = await axios.post("/api/settings", {
+          const result = await axios.post("/api/settings/get", {
             ownerId,
           });
           setBusinessName(result.data.businessName || "");
