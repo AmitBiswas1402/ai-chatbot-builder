@@ -276,8 +276,7 @@ export default function ChatWidget() {
       widgetRoots.forEach((el) => el.remove());
       const s = document.getElementById("in-page-live-widget");
       if (s) s.remove();
-      // @ts-ignore
-      delete window.__aiChatbotLoaded;
+      delete (window as unknown as { __aiChatbotLoaded?: boolean }).__aiChatbotLoaded;
     };
   }, [isLiveFloating, ownerId, appUrl]);
 

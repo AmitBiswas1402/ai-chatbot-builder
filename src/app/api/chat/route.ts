@@ -1,4 +1,3 @@
-import { connectDB } from "@/lib/db";
 import { getSettingForOwner } from "@/lib/db";
 import { GoogleGenAI } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
@@ -114,7 +113,7 @@ HELPFUL ANSWER:
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
     const modelsToTry = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-1.5-flash"];
-    let response: any = null;
+    let response: { text?: string | null } | null = null;
     for (const model of modelsToTry) {
       try {
         response = await ai.models.generateContent({

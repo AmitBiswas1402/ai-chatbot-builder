@@ -9,11 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.9.2",
     "@google/genai": "^1.50.1",
-    "@scalekit-sdk/node": "^2.5.0",
+    "@neondatabase/serverless": "^1.1.0",
     "axios": "^1.15.0",
-    "mongodb": "^7.1.1",
-    "mongoose": "^9.4.1",
+    "drizzle-orm": "^1.0.0-rc.4",
     "motion": "^12.38.0",
     "next": "16.2.1",
     "react": "19.2.4",
@@ -26,9 +26,12 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "dotenv": "^17.4.2",
+    "drizzle-kit": "^1.0.0-rc.4",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.13",
     "typescript": "^5"
   }
 }

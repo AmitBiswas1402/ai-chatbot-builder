@@ -1,80 +1,14 @@
-import { scalekit } from "@/lib/scalekit";
-import { NextRequest, NextResponse } from "next/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
-
-export async function proxy(req: NextRequest) {
-  const accessToken = req.cookies.get("access_token")?.value;
-  const refreshToken = req.cookies.get("refresh_token")?.value;
-
-  const redirectToLogin = () => NextResponse.redirect(new URL("/", req.url));
-
-  if (!accessToken) {
-    if (!refreshToken) {
-      return redirectToLogin();
-    }
-
-    try {
-      const refreshedTokens = await scalekit.refreshAccessToken(refreshToken);
-      const response = NextResponse.next();
-
-      response.cookies.set("access_token", refreshedTokens.accessToken, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: COOKIE_MAX_AGE,
-      });
-
-      response.cookies.set("refresh_token", refreshedTokens.refreshToken, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: COOKIE_MAX_AGE,
-      });
-
-      return response;
-    } catch {
-      return redirectToLogin();
-    }
-  }
-
-  try {
-    await scalekit.validateToken(accessToken);
-    return NextResponse.next();
-  } catch {
-    if (!refreshToken) {
-      return redirectToLogin();
-    }
-
-    try {
-      const refreshedTokens = await scalekit.refreshAccessToken(refreshToken);
-      const response = NextResponse.next();
-
-      response.cookies.set("access_token", refreshedTokens.accessToken, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: COOKIE_MAX_AGE,
-      });
-
-      response.cookies.set("refresh_token", refreshedTokens.refreshToken, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: COOKIE_MAX_AGE,
-      });
-
-      return response;
-    } catch {
-      return redirectToLogin();
-    }
-  }
-}
+export default clerkMiddleware();
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Always run for Clerk's auto-proxy path
+    "/__clerk/:path*",
+    // Always run for API routes
+    "/(api|trpc)(.*)",
+  ],
 };

@@ -1,19 +1,23 @@
-import { cookies } from "next/headers";
-import { scalekit } from "./scalekit";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function getSession() {
-  const session = await cookies();
-  const token = session.get("access_token")?.value;
-
-  if (!token) {
-    return null;
-  }
-
   try {
-    const result: any = await scalekit.validateToken(token);
-    return await scalekit.user.getUser(result.sub);
+    const user = await currentUser();
+    if (!user) return null;
+
+    return {
+      user: {
+        id: user.id,
+        email:
+          user.primaryEmailAddress?.emailAddress ||
+          user.emailAddresses[0]?.emailAddress ||
+          "",
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+    };
   } catch (error) {
-    console.log(error);
+    console.error("Error retrieving Clerk session:", error);
     return null;
   }
 }

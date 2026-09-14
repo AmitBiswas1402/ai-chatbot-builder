@@ -1,6 +1,7 @@
 "use client";
 
 import axios from "axios";
+import { UserButton } from "@clerk/nextjs";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -57,9 +58,9 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
           setSupportEmail(result.data.supportEmail || "");
           setKnowledge(result.data.knowledge || "");
 
-          console.log("Settings saved:", result.data);
+          console.log("Settings loaded:", result.data);
         } catch (err) {
-          console.error("Error saving settings:", err);
+          console.error("Error loading settings:", err);
         }
       };
       handleGetDetails();
@@ -89,11 +90,15 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
             </div>
           </div>
 
-          <button className="rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition hover:-translate-y-0.5 hover:border-zinc-400 hover:bg-zinc-50"
-          onClick={() => router.push("/embed")}
-          >
-            Embed Chatbot
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              className="rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition hover:-translate-y-0.5 hover:border-zinc-400 hover:bg-zinc-50"
+              onClick={() => router.push("/embed")}
+            >
+              Embed Chatbot
+            </button>
+            <UserButton />
+          </div>
         </div>
       </motion.div>
 
@@ -112,7 +117,7 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
               Chatbot Settings
             </h1>
             <p className="mt-2 text-sm text-zinc-600">
-              Configure your chatbot's behavior and appearance.
+              Configure your chatbot&apos;s behavior and appearance.
             </p>
           </div>
 
@@ -196,4 +201,5 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
     </div>
   );
 };
+
 export default Dashboard;

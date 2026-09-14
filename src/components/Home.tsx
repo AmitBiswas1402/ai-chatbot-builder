@@ -4,18 +4,25 @@ import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { IoChatbubbleSharp } from "react-icons/io5";
+import { useClerk } from "@clerk/nextjs";
 
 const HomePage = ({ email }: { email?: string }) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { openSignIn, signOut } = useClerk();
+
   const handleLogin = () => {
-    setLoading(true);
-    window.location.href = "/api/auth/login";
+    openSignIn({ fallbackRedirectUrl: "/dashboard" });
   };
-  const handleLogout = () => {
+
+  const handleLogout = async () => {
     setLoading(true);
-    window.location.href = "/api/auth/logout";
+    await signOut();
+    setOpen(false);
+    setLoading(false);
+    router.refresh();
   };
+
   const firstLetter = email ? email[0]?.toUpperCase() : "";
   const [open, setOpen] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -88,7 +95,8 @@ const HomePage = ({ email }: { email?: string }) => {
                     </button>
                     <button
                       onClick={handleLogout}
-                      className="block px-4 py-3 text-sm text-red-600 hover:bg-zinc-100"
+                      disabled={loading}
+                      className="w-full text-left block px-4 py-3 text-sm text-red-600 hover:bg-zinc-100 disabled:opacity-50"
                     >
                       Logout
                     </button>
@@ -98,7 +106,7 @@ const HomePage = ({ email }: { email?: string }) => {
             </div>
           ) : (
             <button
-              className="px-5 py-2 text-sm rounded-full bg-black text-white  font-medium hover:bg-zinc-800 transition disabled:opacity-60 flex items-center gap-2"
+              className="px-5 py-2 text-sm rounded-full bg-black text-white font-medium hover:bg-zinc-800 transition disabled:opacity-60 flex items-center gap-2"
               onClick={handleLogin}
             >
               Login
@@ -125,8 +133,8 @@ const HomePage = ({ email }: { email?: string }) => {
             </p>
             <div className="mt-10 flex gap-4">
               {email ? (
-                <button 
-                 className="px-5 py-2 bg-black text-white rounded-full font-medium hover:bg-zinc-800 transition"
+                <button
+                  className="px-5 py-2 bg-black text-white rounded-full font-medium hover:bg-zinc-800 transition"
                   onClick={() => router.push("/dashboard")}
                 >
                   Go to Dashboard
